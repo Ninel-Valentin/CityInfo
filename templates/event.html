@@ -1,0 +1,152 @@
+{% extends 'display_base.html' %}
+
+{% block title %}
+Events
+{% endblock %}
+
+{% block head %}
+<!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}"> -->
+{% endblock %}
+
+{% block filters %}
+<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+<form method="POST" id="filters" target="dummyframe">
+    <table>
+        <tr>
+            <td>
+                <label for="title">Title</label>
+            </td>
+            <td>
+                <input id="title" placeholder="Birthday party">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="description">Description</label>
+            </td>
+            <td>
+                <input id="description" placeholder="A casual party">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="category">Category</label>
+            </td>
+            <td>
+                <input id="category" placeholder="Party">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="price">Price</label>
+            </td>
+            <td>
+                <input id="price" pattern="\d+(\.\d+)?" placeholder="10.99">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="city">City</label>
+            </td>
+            <td>
+                <input id="city" placeholder="Brasov">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="location">Location</label>
+            </td>
+            <td>
+                <input id="location" placeholder="Center">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="date">Date</label>
+            </td>
+            <td>
+                <input id="date" type="date">
+            </td>
+        </tr>
+        <tr>
+            <td class="button_cell">
+                <input id="filter_button" type="button" value="filter">
+            </td>
+            <td class="button_cell">
+                <input id="create_button" type="submit" value="create">
+            </td>
+        </tr>
+    </table>
+</form>
+{% endblock %}
+
+{% block table %}
+{% for result in results %}
+<tr>
+    <td>
+        <input type="checkbox" readonly 
+        {% if result.enabled %}
+        checked
+        {% endif %}
+        />
+    </td>
+    <td>{{ result.category }}</td>
+    <td>{{ result.title }}</td>
+    <td>{{ result.description }}</td>
+    <td>{{ result.city }}</td>
+    <td>{{ result.location }}</td>
+    <td>{{ result.date }}</td>
+    <td>{{ result.price }}</td>
+    <td>
+        <button class="edit"></button>
+        <button class="delete"></button>
+    </td>
+</tr>
+{% endfor %}
+{% endblock %}
+
+{% block script %}
+<script>
+
+    function validateFilterFields(form, strict) {
+        const form_elements = form.elements;
+        const fields = Object.keys(form_elements).splice(Object.keys(form_elements).length / 2);
+
+        let filter = '';
+        for (let field of fields) {
+            if (field.includes('button'))
+                continue;
+
+            let currentField = document.forms.filters[field];
+            let patternCheck = currentField.getAttribute('pattern')
+            let value = currentField.value;
+
+            if (value) {
+                if (patternCheck && value.match(patternCheck)?.shift() != value) {
+                    alert(`There's an issue with the format of the field "${field}"`);
+                    return false;
+                }
+                filter = `${filter}${filter.length == 0 ? '' : '&'}${field}=${value}`;
+            }
+        }
+
+        return filter;
+    }
+
+    document.querySelector('input#filter_button').onclick = (e) => {
+        document.forms.filters.action = window.location.href.split('?').shift();
+        const filter = validateFilterFields(document.forms.filters, false);
+        if (filter)
+            window.location.replace(`${window.location.href.split('?').shift()}?${filter}`);
+    }
+
+    document.querySelector('input#create_button').onclick = (e) => {
+        e.preventDefault()
+        const form = document.forms.filters;
+        const filter = validateFilterFields(form, true);
+        form.action = `${window.location.href.split('?').shift()}?enabled=true&${filter}`;
+        form.submit();
+        window.location.reload();
+    }
+</script>
+{% endblock %}

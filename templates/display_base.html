@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="form_overlay">
+    <section class="form_planner">
+        <h1>Options</h3>
+            {% block filters %}
+            {% endblock %}
+    </section>
+    <section class="form_display">
+        {% if results | length > 0 %}
+        <table class="info_display">
+            <thead>
+                <tr>
+                    {% for field in fields %}
+                    <th> {{ field | capitalize }}</th>
+                    {% endfor %}
+                    <th> Tools </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% block table %}
+                {% endblock %}
+            </tbody>
+        </table>
+        {% else %}
+        <h1 class="main_error">
+            No results found yet...
+            <br />
+            Adjust the filters and try again!
+        </h1>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
