@@ -2,8 +2,8 @@ from flask import request
 from flask_restful import Resource
 import requests
 
-EVENT_URL = 'http://127.0.0.1:5001/events'
-WEATHER_URL = 'http://127.0.0.1:5002/weather'
+EVENT_URL = 'http://10.2.98.193:5001/events'
+WEATHER_URL = 'http://10.2.98.193:5002/weather'
 headers = {'Content-Type': 'application/json'}
 
 class GatewayEndpoint(Resource):

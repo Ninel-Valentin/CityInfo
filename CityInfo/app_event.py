@@ -24,8 +24,8 @@ def index():
 with app.app_context():
     try:
         db.create_all()
-    except Exception:
-        print("Can't connect to the database! Program will close now...")
+    except Exception as e:
+        print(f"Can't connect to the database! Program will close now...\nMessage:\n{repr(e)}")
         exit(0)
 
 if __name__ == '__main__':
