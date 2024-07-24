@@ -8,6 +8,7 @@ class Event(db.Model):
     category = db.Column(db.String(128))
     title = db.Column(db.String(128))
     description = db.Column(db.String(128))
+    # description = db.Column(db.Text) # Nelimitat de mare
     date = db.Column(db.Date)
     city = db.Column(db.String(128))
     price = db.Column(db.Float)
@@ -26,6 +27,7 @@ class Weather(db.Model):
     temperature = db.Column(db.Float)
     tips = db.Column(db.String(128))
     description = db.Column(db.String(128))
+    # description = db.Column(db.Text) # Nelimitat de mare
     date = db.Column(db.Date)
     city = db.Column(db.String(128))
         

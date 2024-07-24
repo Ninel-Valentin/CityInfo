@@ -3,7 +3,7 @@ from flask_restful import Api
 
 from utils.config import Config
 from utils.models import db
-from resources.weather import WeatherEndpoint
+from endpoints.weather import WeatherEndpoint
 
 import os
 cd = os.path.dirname(os.path.realpath(__file__))

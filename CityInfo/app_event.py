@@ -3,7 +3,7 @@ from flask_restful import Api
 
 from utils.config import Config
 from utils.models import db
-from resources.event import EventEndpoint
+from endpoints.event import EventEndpoint
 
 import os
 cd = os.path.dirname(os.path.realpath(__file__))

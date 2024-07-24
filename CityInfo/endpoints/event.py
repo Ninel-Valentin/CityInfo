@@ -17,6 +17,8 @@ class EventEndpoint(Resource):
             },
             "date": {
                 "type": datetime.date
+                # Would be good to add default placeholders here | i.e. value || placeholder
+                # "placeholder": datetime.date.today #()
             }
         }
 
@@ -51,13 +53,14 @@ class EventEndpoint(Resource):
                 return [], 204
 
         elif content_type.lower() == 'text/html':
-            results, status_code = process_response(events, self.event_fields)
+            results, status_code = process_response(events) #, self.event_fields) # Changed here - update weather
             custom_response = render_template('event.html', found=True, results=results or [], fields=self.event_fields), status_code, headers
             return make_response(custom_response)
         else:
             return {"error": "Unknown content-type"}, 415
 
     def post(self):
+        # request.form.get(key,'_default_placeholder_')
         fields = {key: request.args.get(key) for key in self.event_fields if request.args.get(key) is not None}
 
         if len(fields) != len(self.event_fields):
@@ -68,20 +71,7 @@ class EventEndpoint(Resource):
         new_event = Event(**parsed_fields)
         db.session.add(new_event)
         db.session.commit()
-        return "OK", 200
-
-    def delete(self):
-        event_id = request.args.get('id')
-        if not event_id:
-            return {"error": "ID is required to delete an event"}, 400
-
-        event = Event.query.filter_by(id=event_id).first()
-        if not event:
-            return {"error": "Event not found"}, 404
-
-        event.enabled = False
-        db.session.commit()
-        return "Event disabled", 200
+        return { "message" : f"Added successfully event id: \"{new_event.id}\"! "}, 201 # Changed here - update weather
 
     def put(self):
         event_id = request.args.get('id')
@@ -98,3 +88,16 @@ class EventEndpoint(Resource):
             setattr(event, key, value)
         db.session.commit()
         return "Event updated", 200
+
+    def delete(self):
+        event_id = request.args.get('id')
+        if not event_id:
+            return {"error": "ID is required to delete an event"}, 400
+
+        event = Event.query.filter_by(id=event_id).first()
+        if not event:
+            return {"error": "Event not found"}, 404
+
+        event.enabled = False
+        db.session.commit()
+        return "Event disabled", 200
