@@ -2,8 +2,14 @@ from flask import request
 from flask_restful import Resource
 import requests
 
-EVENT_URL = 'http://10.2.98.193:5001/events'
-WEATHER_URL = 'http://10.2.98.193:5002/weather'
+import os
+
+# EVENT_URL = 'http://10.2.98.193:5001/events'
+# WEATHER_URL = 'http://10.2.98.193:5002/weather'
+
+EVENT_URL = os.environ.get('EVENT_SERVICE_URL')
+WEATHER_URL = os.environ.get('WEATHER_SERVICE_URL')
+
 headers = {'Content-Type': 'application/json'}
 
 class GatewayEndpoint(Resource):
@@ -12,6 +18,7 @@ class GatewayEndpoint(Resource):
     def get(self):
         filters = {key: request.args.get(key) for key in self.filter_fields if request.args.get(key) is not None}
         url_filter = "&".join(list(map(lambda entry : f"{entry[0]}={entry[1]}", filters.items())))
+        # url_filter = request.params ??
         
         event_url = f"{EVENT_URL}?{url_filter}" if url_filter else EVENT_URL
         weather_url = f"{WEATHER_URL}?{url_filter}" if url_filter else WEATHER_URL
@@ -20,7 +27,7 @@ class GatewayEndpoint(Resource):
         status_code = 200
         
         try:
-            event_request = requests.get(event_url, headers=headers)
+            event_request = requests.get(event_url, headers=headers, verify=False)
             status_code = event_request.status_code
             
             response.update({"events": event_request.json()})
@@ -31,7 +38,7 @@ class GatewayEndpoint(Resource):
             }});
         
         try:
-            weather_request = requests.get(weather_url, headers=headers)
+            weather_request = requests.get(weather_url, headers=headers, verify=False)
             status_code = status_code if status_code == weather_request.status_code else 200 # Return the common status, if not common return 200
             
             response.update({"weather": weather_request.json()})

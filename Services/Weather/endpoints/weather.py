@@ -54,7 +54,7 @@ class WeatherEndpoint(Resource):
                 return [], 204
 
         elif content_type.lower() == 'text/html':
-            results, status_code = process_response(weather, self.weather_fields)
+            results, status_code = process_response(weather) #, self.weather_fields)
             custom_response = render_template('weather.html', found=True, results=results or [], fields=self.weather_fields), status_code, headers
             return make_response(custom_response)
         else:

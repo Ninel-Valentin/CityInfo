@@ -5,7 +5,12 @@ from utils.config import Config
 from utils.models import db
 from endpoints.event import EventEndpoint
 
+import time
 import os
+
+HOST = os.environ.get('HOST') or '0.0.0.0'
+PORT = os.environ.get('PORT') or '5001'
+
 cd = os.path.dirname(os.path.realpath(__file__))
 
 app = Flask('EventInfo', template_folder=f'{cd}\\templates', static_folder=f'{cd}\\static')
@@ -21,6 +26,7 @@ headers = {'Content-Type': 'text/html'}
 def index():
     return make_response(render_template('index.html', found=True), 200, headers)
 
+time.sleep(30)
 with app.app_context():
     try:
         db.create_all()
@@ -29,4 +35,4 @@ with app.app_context():
         exit(0)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host=HOST, port=PORT, debug=True)

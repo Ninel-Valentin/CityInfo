@@ -11,10 +11,10 @@ ENV DB_PORT=3306
 ENV DB_USER=dbadmin
 ENV DB_PASS=dbadmin-pass
 
-ADD . /CityInfo
-WORKDIR /CityInfo
+ADD . /Services/Events
+WORKDIR /Services/Events
 
-RUN pip install -r CityInfo/requirements.txt
+RUN pip install -r requirements.txt
 
-EXPOSE 5000
-CMD ["python", "CityInfo/app_gateway.py"] # asta este procesul care ruleaza cand qcreez containerul
+EXPOSE 5001
+CMD ["python", "app_event.py"] # asta este procesul care ruleaza cand qcreez containerul

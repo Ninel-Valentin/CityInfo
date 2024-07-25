@@ -5,7 +5,12 @@ from utils.config import Config
 from utils.models import db
 from endpoints.weather import WeatherEndpoint
 
+import time
 import os
+
+HOST = os.environ.get('HOST') or '0.0.0.0'
+PORT = os.environ.get('PORT') or '5002'
+
 cd = os.path.dirname(os.path.realpath(__file__))
 
 app = Flask('WeatherInfo', template_folder=f'{cd}\\templates', static_folder=f'{cd}\\static')
@@ -21,12 +26,13 @@ headers = {'Content-Type': 'text/html'}
 def index():
     return make_response(render_template('index.html', found=True), 200, headers)
 
+time.sleep(30)
 with app.app_context():
     try:
         db.create_all()
-    except Exception:
-        print("Can't connect to the database! Program will close now...")
+    except Exception as e:
+        print(f"Can't connect to the database! Program will close now...\nMessage:\n{repr(e)}")
         exit(0)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5002, debug=True)
+    app.run(host=HOST, port=PORT, debug=True)
